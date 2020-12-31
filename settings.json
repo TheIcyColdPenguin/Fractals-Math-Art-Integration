@@ -1,0 +1,135 @@
+{
+    "telemetry.enableTelemetry": false,
+    "telemetry.enableCrashReporter": false,
+    "files.autoSave": "afterDelay",
+    "extensions.autoUpdate": false,
+    "workbench.tree.indent": 20,
+    "workbench.iconTheme": "vscode-icons",
+    "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+    "breadcrumbs.enabled": false,
+    "window.title": "${activeEditorShort}",
+    "zenMode.hideLineNumbers": false,
+    "workbench.colorCustomizations": {
+        "tree.indentGuidesStroke": "#FFFFFF",
+        "terminal.foreground": "#BBBBBB"
+    },
+
+    "editor.suggestSelection": "first",
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "editor.cursorBlinking": "smooth",
+    "editor.cursorSmoothCaretAnimation": true,
+    "editor.renderWhitespace": "boundary",
+    "editor.letterSpacing": 0.2,
+    "editor.lineHeight": 22,
+    "editor.fontSize": 14,
+    "editor.emptySelectionClipboard": false,
+
+    "prettier.tabWidth": 4,
+    "prettier.printWidth": 100,
+    "prettier.trailingComma": "es5",
+    "prettier.jsxBracketSameLine": true,
+    "[json]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[html]": {
+        "editor.defaultFormatter": "vscode.html-language-features"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+
+    "python.languageServer": "Pylance",
+    "python.formatting.provider": "black",
+    "python.linting.flake8Args": ["--max-line-length=100"],
+    "python.formatting.blackArgs": ["--line-length", "120"],
+    "python.pythonPath": "/usr/local/bin/python3",
+
+    "sonarlint.ls.javaHome": "/Users/vineethchangarangath/.vscode/extensions/sonarsource.sonarlint_managed-jre/jre/jdk-11.0.9+11-jre/Contents/Home",
+
+    "gitlens.hovers.currentLine.over": "line",
+    "gitlens.currentLine.format": "${author}, ${ago} • ${message}",
+    "gitlens.currentLine.scrollable": false,
+    "gitlens.codeLens.scopes": ["document"],
+    "gitlens.statusBar.format": "${author}, ${ago}",
+    "gitlens.statusBar.reduceFlicker": true,
+    "gitlens.views.repositories.location": "gitlens",
+    "gitlens.views.fileHistory.location": "gitlens",
+    "gitlens.views.lineHistory.location": "gitlens",
+    "gitlens.views.compare.location": "gitlens",
+    "gitlens.views.search.location": "gitlens",
+    "gitlens.currentLine.enabled": false,
+    "better-comments.highlightPlainText": true,
+    "better-comments.tags": [
+        {
+            "tag": "!",
+            "color": "#FF2D00",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": false,
+            "italic": false
+        },
+        {
+            "tag": "?",
+            "color": "#3498DB",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": false,
+            "italic": false
+        },
+        {
+            "tag": "//",
+            "color": "#474747",
+            "strikethrough": true,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": false,
+            "italic": false
+        },
+        {
+            "tag": "todo",
+            "color": "#FF8C00",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": false,
+            "italic": false
+        },
+        {
+            "tag": "*",
+            "color": "#98C379",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": false,
+            "italic": false
+        },
+        {
+            "tag": "hack",
+            "color": "#71DE8E",
+            "strikethrough": false,
+            "underline": false,
+            "backgroundColor": "transparent",
+            "bold": false,
+            "italic": true
+        }
+    ],
+    "workbench.statusBar.visible": true,
+    "workbench.editorAssociations": [
+        {
+            "viewType": "jupyter.notebook.ipynb",
+            "filenamePattern": "*.ipynb"
+        }
+    ],
+
+    "diffEditor.ignoreTrimWhitespace": false,
+    "window.zoomLevel": 0
+}
