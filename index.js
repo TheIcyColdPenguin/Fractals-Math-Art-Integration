@@ -120,9 +120,10 @@ const drawAxes = (p, cartesianCoords) => {
     p.line(0, planeCenter.y, p.width, planeCenter.y);
     p.line(planeCenter.x, 0, planeCenter.x, p.height);
     // screen axes
-    p.stroke(100);
-    p.line(0, p.height / 2, p.width, p.height / 2);
-    p.line(p.width / 2, 0, p.width / 2, p.height);
+    const crosshairSize = 20;
+    p.stroke(255, 200);
+    p.line(p.width / 2 - crosshairSize, p.height / 2, p.width / 2 + crosshairSize, p.height / 2);
+    p.line(p.width / 2, p.height / 2 - crosshairSize, p.width / 2, p.height / 2 + crosshairSize);
 };
 /*
  * This function takes a zoom value and sets the plane space accordingly
@@ -193,11 +194,11 @@ const screenToCart = ({ x, y }, cartesianCoords, p) => {
 /*
  * This is a function that creates the sketches
  */
-const createSketch = (toCreateMandelBbrotSet = true) => {
+const createSketch = (isMandelbrotSet, pos = { real: 0, imag: 0 }) => {
     return (p) => {
         let cartesianCoords;
         let zoomValue = 7;
-        let juliaSetSketch;
+        let resScale = 5;
         p.setup = () => {
             // required setup
             p.createCanvas(p.windowWidth, p.windowHeight);
@@ -206,12 +207,12 @@ const createSketch = (toCreateMandelBbrotSet = true) => {
             p.textFont("Roboto");
             p.textSize(7);
             updateInteractive();
-            juliaSetSketch = setupInteractive();
+            setupInteractive();
         };
         p.draw = () => {
             p.background(255);
             p.loadPixels();
-            renderFractal(p, 2);
+            renderFractal(p);
             p.updatePixels();
             drawAxes(p, cartesianCoords);
         };
@@ -225,26 +226,19 @@ const createSketch = (toCreateMandelBbrotSet = true) => {
          */
         p.mousePressed = () => {
             // if this mousePress should be the one that orders the julia set to be created
-            var _a;
-            if (p.keyIsPressed && p.key === "Shift") {
-                // first, clear anything that's already been set
-                (_a = juliaSetSketch.firstChild) === null || _a === void 0 ? void 0 : _a.remove();
-                juliaSetSketch.style.visibility = "visible";
-                const img = p.createImage(Math.floor(p.width / 4), Math.floor(p.height / 4));
-                img.loadPixels();
-                renderFractal(img, 1, false, screenToCart({ x: p.mouseX, y: p.mouseY }, cartesianCoords, p));
-                img.updatePixels();
-                juliaSetSketch.appendChild(img.canvas);
+            if (isMandelbrotSet && p.keyIsPressed && p.key === "Shift") {
+                const mousePos = screenToCart({ x: p.mouseX, y: p.mouseY }, cartesianCoords, p);
+                window.open(window.location.origin + `?set=julia&real=${mousePos.real}&imag=${mousePos.imag}`);
             }
         };
-        const renderFractal = (canvas, resScale = 1, isMandelbrotSet = true, pos = { real: -0.70176, imag: -0.3842 }) => {
+        const renderFractal = (canvas) => {
             // loop through every pixel
             for (let x = 0; x < canvas.width - resScale + 1; x += resScale) {
                 for (let y = 0; y < canvas.width - resScale + 1; y += resScale) {
                     //choose whether to display the mandelbrot set, or a particular julia set
                     const tempCol = isMandelbrotSet
                         ? distToInf(screenToCart({ x, y }, cartesianCoords, canvas))
-                        : distToInf(pos, screenToCart({ x, y }, { x: { start: -2, stop: 2 }, y: { start: -2, stop: 2 } }, canvas));
+                        : distToInf(pos, screenToCart({ x, y }, cartesianCoords, canvas));
                     const col = colors[tempCol % colors.length];
                     for (let xOff = 0; xOff < resScale; xOff++) {
                         for (let yOff = 0; yOff < resScale; yOff++) {
@@ -259,7 +253,7 @@ const createSketch = (toCreateMandelBbrotSet = true) => {
             }
         };
         p.mouseDragged = () => {
-            if (p.mouseX >= 0 && p.mouseX < p.width && p.mouseY > 0 && p.mouseY < p.height) {
+            if (!(p.mouseX < 180 && p.mouseY < 50)) {
                 const offset = convertSliderToLog(zoomValue);
                 // tuning to make sure the distance moved by the mouse is the same as on the screen
                 const movement = {
@@ -294,32 +288,35 @@ const createSketch = (toCreateMandelBbrotSet = true) => {
             const zoomIn = () => updateZoom(++zoomValue, cartesianCoords, p);
             const zoomOut = () => updateZoom(--zoomValue, cartesianCoords, p);
             // keyboard shortcuts for zooming
-            const juliaSetDiv = document.createElement("div");
-            juliaSetDiv.className = "inline-box";
-            juliaSetDiv.style.left = p.mouseX + "px";
-            juliaSetDiv.style.top = p.mouseY + "px";
-            juliaSetDiv.style.width = Math.floor(p.width / 4) + "px";
-            juliaSetDiv.style.height = Math.floor(p.height / 4) + "px";
-            juliaSetDiv.style.borderRadius = "10px";
-            juliaSetDiv.style.zIndex = "1";
-            document.body.appendChild(juliaSetDiv);
-            document.addEventListener("mousemove", (e) => {
-                juliaSetDiv.style.left = e.pageX + "px";
-                juliaSetDiv.style.top = e.pageY + "px";
-            });
             document.addEventListener("keypress", (e) => {
                 if (e.code === "Equal")
                     zoomIn();
                 if (e.code === "Minus")
                     zoomOut();
-                if (e.code === "KeyE")
-                    juliaSetDiv.style.visibility = "hidden";
             });
-            return juliaSetDiv;
+            document.querySelector("input").onchange = e => {
+                resScale = 9 - parseInt(e.target.value);
+            };
         };
     };
 };
 /*
  * this is the main canvas, which displays the mandelbrot set
  */
-new p5(createSketch());
+(() => {
+    let paramString = window.location.search;
+    paramString = paramString ? paramString : "set=mandelbrot";
+    const splitParams = paramString.split("&");
+    const allParamsArr = splitParams.map(str => str.split("="));
+    const allParams = {};
+    allParamsArr.forEach(pair => {
+        allParams[pair[0]] = pair[1];
+    });
+    if (allParams.set !== "mandelbrot" && !(allParams.real && allParams.imag)) {
+        window.location.replace(window.location.origin);
+    }
+    new p5(createSketch(allParams.set === "mandelbrot", {
+        real: parseFloat(allParams.real) || 0,
+        imag: parseFloat(allParams.imag) || 0,
+    }));
+})();
