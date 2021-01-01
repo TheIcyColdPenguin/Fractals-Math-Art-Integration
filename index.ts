@@ -21,6 +21,7 @@ interface ValueRange {
 
 const zoomStart = Math.log(1e-10);
 const zoomStop = Math.log(2.3);
+const log2 = Math.log(2);
 
 // const colors = [
 //     [3, 7, 30],
@@ -55,22 +56,60 @@ const zoomStop = Math.log(2.3);
 //     [250, 201, 184],
 // ];
 
+// const colors = [
+//     [66, 30, 15],
+//     [25, 7, 26],
+//     [9, 1, 47],
+//     [4, 4, 73],
+//     [0, 7, 100],
+//     [12, 44, 138],
+//     [24, 82, 177],
+//     [211, 236, 248],
+//     [241, 233, 191],
+//     [248, 201, 95],
+//     [255, 170, 0],
+//     [204, 128, 0],
+//     [153, 87, 0],
+//     [106, 52, 3],
+//     [250, 201, 184],
+// ];
+
+// const colors = [
+//     [255, 255, 255],
+//     [220, 233, 233],
+//     [185, 210, 210],
+//     [156, 184, 188],
+//     [133, 153, 165],
+//     [111, 122, 142],
+//     [89, 92, 121],
+//     [66, 66, 92],
+//     [44, 44, 62],
+//     [21, 21, 30],
+//     [0, 0, 0],
+// ];
+
 const colors = [
-    [66, 30, 15],
-    [25, 7, 26],
-    [9, 1, 47],
-    [4, 4, 73],
-    [0, 7, 100],
-    [12, 44, 138],
-    [24, 82, 177],
-    [211, 236, 248],
-    [241, 233, 191],
-    [248, 201, 95],
-    [255, 170, 0],
-    [204, 128, 0],
-    [153, 87, 0],
-    [106, 52, 3],
-    [250, 201, 184],
+    [255.0, 255.0, 255.0],
+    [238.59374409374408, 244.5, 244.49999763750137],
+    [220.82030019530018, 233.125, 233.12499507812782],
+    [203.04685629685628, 221.75, 221.7499925187543],
+    [185.27341239841238, 210.375, 210.37498995938077],
+    [167.49996849996847, 198.99999999999997, 198.99998740000726],
+    [156.62499999999997, 184.812481054697, 188.49998503750862],
+    [145.25, 169.17185872070831, 177.1249824781351],
+    [133.87499999999997, 153.53123638671963, 165.74997991876157],
+    [122.49999999999999, 137.89061405273094, 154.37497735938803],
+    [111.12499999999999, 122.24999171874222, 142.9999748000145],
+    [100.625, 107.81249417967574, 132.49997243751588],
+    [89.25, 92.17187184568702, 121.12496987814235],
+    [77.87499999999999, 77.87496952714346, 108.34782608695654],
+    [66.49999999999997, 66.49997397823486, 92.52173913043481],
+    [55.124999999999986, 55.12497842932627, 76.69565217391306],
+    [44.625, 44.62498253802603, 62.08695652173915],
+    [33.24999999999999, 33.24998698911743, 46.260869565217405],
+    [21.875000000000007, 21.874991440208838, 30.434782608695663],
+    [10.499999999999991, 10.499995891300246, 14.608695652173916],
+    [0, 0, 0],
 ];
 
 // useful functions
@@ -164,9 +203,10 @@ const distToInf = (
 ): number => {
     /*
      * This function calculates the magnitude of any complex number
+     * won't take sqrt for performance reasons
      */
 
-    const magnitude = (z: Complex): number => Math.sqrt(z.real * z.real + z.imag + z.imag);
+    const magnitude = (z: Complex): number => z.real * z.real + z.imag + z.imag;
 
     /*
      * This function is the main formula that is iterated
@@ -175,22 +215,26 @@ const distToInf = (
     const iterate = (z: Complex): Complex => {
         const square: Complex = {
             real: z.real * z.real - z.imag * z.imag,
-            imag: 2 * z.real * z.imag,
+            imag: (z.real + z.real) * z.imag,
         };
         return { real: square.real + c.real, imag: square.imag + c.imag };
     };
 
-    const MAX_ITERATIONS = 500;
-    const INFINITY = 16;
+    const MAX_ITERATIONS = 600;
+    const INFINITY = 256;
     let n = 0;
 
     let zNext = iterate(zInitial || { real: 0, imag: 0 });
 
-    while (n < MAX_ITERATIONS) {
-        if (magnitude(zNext) > INFINITY) break;
-
+    while (magnitude(zNext) < INFINITY && n < MAX_ITERATIONS) {
         zNext = iterate(zNext);
         n++;
+    }
+
+    if (n < MAX_ITERATIONS) {
+        const logZn = Math.log(magnitude(zNext)) / 2;
+        const nu = Math.log(logZn / Math.log(16)) / Math.log(16);
+        n = n + 1 - Math.floor(nu);
     }
 
     return n;
@@ -294,15 +338,15 @@ const createSketch = () => {
                               screenToCart({ x, y }, { x: { start: -2, stop: 2 }, y: { start: -2, stop: 2 } }, canvas)
                           );
 
-                    const col = tempCol % colors.length;
+                    const col = colors[tempCol % colors.length];
 
                     for (let xOff = 0; xOff < resScale; xOff++) {
                         for (let yOff = 0; yOff < resScale; yOff++) {
                             const loc = (x + xOff + (y + yOff) * canvas.width) * 4;
 
-                            canvas.pixels[loc + 0] = colors[col][0];
-                            canvas.pixels[loc + 1] = colors[col][1];
-                            canvas.pixels[loc + 2] = colors[col][2];
+                            canvas.pixels[loc + 0] = col[0];
+                            canvas.pixels[loc + 1] = col[1];
+                            canvas.pixels[loc + 2] = col[2];
                             canvas.pixels[loc + 3] = 255;
                         }
                     }
