@@ -193,7 +193,7 @@ const screenToCart = ({ x, y }, cartesianCoords, p) => {
 /*
  * This is a function that creates the sketches
  */
-const createSketch = () => {
+const createSketch = (toCreateMandelBbrotSet = true) => {
     return (p) => {
         let cartesianCoords;
         let zoomValue = 7;
@@ -323,3 +323,4 @@ const createSketch = () => {
  * this is the main canvas, which displays the mandelbrot set
  */
 new p5(createSketch());
+console.log(window.location.href);

@@ -258,7 +258,7 @@ const screenToCart = ({ x, y }: Point, cartesianCoords: ValueRange, p: any): Com
  * This is a function that creates the sketches
  */
 
-const createSketch = () => {
+const createSketch = (toCreateMandelBbrotSet: boolean = true) => {
     return (p: any) => {
         let cartesianCoords: ValueRange;
 
@@ -439,3 +439,4 @@ const createSketch = () => {
  */
 
 new p5(createSketch());
+console.log(window.location.href);
