@@ -439,4 +439,3 @@ const createSketch = (toCreateMandelBbrotSet: boolean = true) => {
  */
 
 new p5(createSketch());
-console.log(window.location.href);

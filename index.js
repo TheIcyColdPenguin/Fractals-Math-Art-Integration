@@ -323,4 +323,3 @@ const createSketch = (toCreateMandelBbrotSet = true) => {
  * this is the main canvas, which displays the mandelbrot set
  */
 new p5(createSketch());
-console.log(window.location.href);
