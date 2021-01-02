@@ -228,7 +228,7 @@ const createSketch = (isMandelbrotSet, pos = { real: 0, imag: 0 }) => {
             // if this mousePress should be the one that orders the julia set to be created
             if (isMandelbrotSet && p.keyIsPressed && p.key === "Shift") {
                 const mousePos = screenToCart({ x: p.mouseX, y: p.mouseY }, cartesianCoords, p);
-                window.open(window.location.origin + `?set=julia&real=${mousePos.real}&imag=${mousePos.imag}`);
+                window.open(`${window.location.origin}${window.location.pathname}?set=julia&real=${mousePos.real}&imag=${mousePos.imag}`);
             }
         };
         const renderFractal = (canvas) => {
