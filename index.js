@@ -198,7 +198,7 @@ const createSketch = (isMandelbrotSet, pos = { real: 0, imag: 0 }) => {
     return (p) => {
         let cartesianCoords;
         let zoomValue = 7;
-        let resScale = 5;
+        let resScale = 3;
         p.setup = () => {
             // required setup
             p.createCanvas(p.windowWidth, p.windowHeight);

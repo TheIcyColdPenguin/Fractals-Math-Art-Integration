@@ -265,7 +265,7 @@ const createSketch = (isMandelbrotSet?: boolean, pos: Complex = { real: 0, imag:
         let cartesianCoords: ValueRange;
 
         let zoomValue = 7;
-        let resScale: number = 5;
+        let resScale: number = 3;
 
         p.setup = () => {
             // required setup
